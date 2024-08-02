@@ -4,9 +4,27 @@
     <meta charset="UTF-8">
     <title>Telegram Web App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Include Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js"></script>
 </head>
 <body>
     <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-7mmS3rsCLdSSZwD1u-FGxpYxJXQ_lDY",
+            authDomain: "tg-web-app-f07b6.firebaseapp.com",
+            projectId: "tg-web-app-f07b6",
+            storageBucket: "tg-web-app-f07b6.appspot.com",
+            messagingSenderId: "598362666446",
+            appId: "1:598362666446:web:03851027ca09443782e79f",
+            measurementId: "G-4K8F1DY1PB"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         Telegram.WebApp.ready();
 
         const user = Telegram.WebApp.initDataUnsafe.user;
@@ -18,7 +36,16 @@
                 last_name: user.last_name
             };
 
-            // Create an inline keyboard button
+            // Save user info to Firebase
+            firebase.database().ref('users/' + user.id).set(userInfo)
+            .then(() => {
+                console.log('User info saved successfully.');
+            })
+            .catch((error) => {
+                console.error('Error saving user info:', error);
+            });
+
+            // Create a button to send user info
             const button = document.createElement("button");
             button.innerText = "Send User Info";
             button.onclick = () => {
